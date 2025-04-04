@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career & Question Generator | Skill.AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c') no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen bg-gray-900 bg-opacity-80">
+    <div class="w-full max-w-3xl p-8 space-y-6 bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl text-white">
+        <div class="text-center">
+            <img src="C:\skill.AI\templates\Srmseal.png" alt="Skill.AI Logo" class="w-16 mx-auto">
+            <h2 class="mt-2 text-2xl font-semibold">Career & Question Generator</h2>
+            <p class="text-sm text-gray-400">Explore career suggestions and answer skill-based questions.</p>
+        </div>
+
+        <!-- Career Suggestions Section -->
+        <div class="space-y-4">
+            <h3 class="text-lg font-medium">Career Suggestions</h3>
+            <div id="careerSuggestions" class="p-4 bg-gray-700 rounded-lg shadow"></div>
+        </div>
+
+        <!-- Questions Section -->
+        <div class="space-y-4">
+            <h3 class="text-lg font-medium">Skill-Based Questions</h3>
+            <div id="questionsContainer" class="p-4 bg-gray-700 rounded-lg shadow"></div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-between">
+            <button onclick="window.location.href='data_collection.html'" class="px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-red-500 to-red-700 rounded-lg shadow-lg hover:from-red-600 hover:to-red-800 focus:ring-4 focus:ring-red-300 transition duration-300 ease-in-out transform hover:scale-105">
+                Back
+            </button>
+            <button onclick="submitAnswers()" class="px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-800 focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out transform hover:scale-105">
+                Submit Answers
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const careerSuggestions = {
+            "C": ["Embedded Systems Developer", "System Programmer"],
+            "C++": ["Game Developer", "Software Engineer"],
+            "Python": ["Data Scientist", "Machine Learning Engineer"],
+            "Java": ["Backend Developer", "Android Developer"],
+            "Web Development": ["Front-end Developer", "Full Stack Developer"]
+        };
+
+        const questionsBank = {
+            "C": ["What are pointers in C?", "Explain memory management in C."],
+            "C++": ["What is polymorphism in C++?", "Explain the difference between C and C++."],
+            "Python": ["What are Python decorators?", "Explain list comprehensions in Python."],
+            "Java": ["What is the difference between an interface and an abstract class in Java?"],
+            "Web Development": ["What is the difference between HTML and HTML5?"]
+        };
+
+        function generateContent() {
+            const studentData = JSON.parse(localStorage.getItem('studentData'));
+            const skills = studentData ? studentData.skills : [];
+
+            const careerContainer = document.getElementById('careerSuggestions');
+            const questionsContainer = document.getElementById('questionsContainer');
+
+            careerContainer.innerHTML = '';
+            questionsContainer.innerHTML = '';
+
+            if (skills.length === 0) {
+                careerContainer.innerHTML = "<p>No skills selected. Please go back and complete the Data Collection form.</p>";
+                return;
+            }
+
+            skills.forEach(skill => {
+                // Add career suggestions
+                if (careerSuggestions[skill]) {
+                    careerSuggestions[skill].forEach(career => {
+                        const div = document.createElement('div');
+                        div.className = "p-2 bg-gray-600 rounded-lg shadow mb-2";
+                        div.innerHTML = `<strong>${career}</strong>`;
+                        careerContainer.appendChild(div);
+                    });
+                }
+
+                // Add skill-specific questions
+                if (questionsBank[skill]) {
+                    questionsBank[skill].forEach(question => {
+                        const div = document.createElement('div');
+                        div.className = "mb-4";
+                        div.innerHTML = `<strong>${question}</strong><br>
+                                         <textarea placeholder="Your answer here..." class="w-full px-4 py-2 mt-2 text-black rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none hover:bg-gray-700 transition duration-200"></textarea>`;
+                        questionsContainer.appendChild(div);
+                    });
+                }
+            });
+        }
+
+        function submitAnswers() {
+            const answers = [];
+            document.querySelectorAll('#questionsContainer textarea').forEach((textarea, index) => {
+                const question = textarea.previousSibling.textContent.trim();
+                const answer = textarea.value.trim();
+                answers.push({ question, answer });
+            });
+
+            // Send answers to the backend
+            fetch('/evaluate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ answers })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.feedback) {
+                    // Save question results to localStorage
+                    localStorage.setItem('questionResults', JSON.stringify(result.feedback));
+
+                    // Example career suggestions based on skill level
+                    const careerSuggestions = result.feedback.map(item => {
+                        if (item.skill_level === 'Beginner') return 'Junior Developer';
+                        if (item.skill_level === 'Intermediate') return 'Software Engineer';
+                        if (item.skill_level === 'Expert') return 'Senior Developer';
+                        return 'Unknown Career Path';
+                    });
+
+                    // Save career suggestions to localStorage
+                    localStorage.setItem('careerSuggestions', JSON.stringify(careerSuggestions));
+
+                    // Redirect to the results page
+                    window.location.href = '/career_results';
+                } else {
+                    alert('Error: Unable to evaluate answers.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        window.onload = generateContent;
+    </script>
+</body>
+</html>

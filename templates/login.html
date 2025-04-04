@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Skill.AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: url('https://source.unsplash.com/1600x900/?technology,ai') no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen bg-gray-900 bg-opacity-80">
+    <div class="w-full max-w-md p-8 space-y-6 bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl text-white">
+        <div class="text-center">
+            <img src="{{ url_for('static', filename='images/Srmseal.png') }}" alt="Skill.AI Logo" class="w-16 mx-auto">
+            <h2 class="mt-2 text-2xl font-semibold">Welcome to Skill.AI</h2>
+            <p class="text-sm text-gray-400">Log in or Sign up to continue</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium">Username</label>
+                <input type="text" id="loginUsername" required class="w-full px-4 py-2 mt-1 text-black rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none hover:bg-gray-700 transition duration-200">
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Password</label>
+                <input type="password" id="loginPassword" required class="w-full px-4 py-2 mt-1 text-black rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none hover:bg-gray-700 transition duration-200">
+            </div>
+            <button type="button" onclick="login()" class="w-full py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition duration-200">Log In</button>
+        </form>
+
+        <!-- Sign-Up Form -->
+        <form id="signupForm" class="space-y-4 hidden">
+            <div>
+                <label class="block text-sm font-medium">Username</label>
+                <input type="text" id="signupUsername" required class="w-full px-4 py-2 mt-1 text-black rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none hover:bg-gray-700 transition duration-200">
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Password</label>
+                <input type="password" id="signupPassword" required class="w-full px-4 py-2 mt-1 text-black rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none hover:bg-gray-700 transition duration-200">
+            </div>
+            <button type="button" onclick="signup()" class="w-full py-2 mt-4 text-white bg-green-600 rounded-lg hover:bg-green-500 transition duration-200">Sign Up</button>
+        </form>
+
+        <!-- Toggle Between Login and Sign-Up -->
+        <div class="text-center text-sm text-gray-400">
+            <p id="toggleText">
+                New to Skill.AI? <a href="#" onclick="toggleForms()" class="hover:text-blue-400 transition duration-200">Create an account</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle between Login and Sign-Up forms
+        function toggleForms() {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const toggleText = document.getElementById('toggleText');
+
+            if (loginForm.classList.contains('hidden')) {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                toggleText.innerHTML = `New to Skill.AI? <a href="#" onclick="toggleForms()" class="hover:text-blue-400 transition duration-200">Create an account</a>`;
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                toggleText.innerHTML = `Already have an account? <a href="#" onclick="toggleForms()" class="hover:text-blue-400 transition duration-200">Log in</a>`;
+            }
+        }
+
+        // Login Function
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Retrieve users from localStorage
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+
+            // Check if the user exists
+            const user = users.find(user => user.username === username && user.password === password);
+
+            if (user) {
+                alert(`Welcome back, ${username}!`);
+                window.location.href = 'data_demo.html'; // Redirect to data_demo page
+            } else {
+                alert('Invalid username or password. Please try again.');
+            }
+        }
+
+        // Sign-Up Function
+        function signup() {
+            const username = document.getElementById('signupUsername').value;
+            const password = document.getElementById('signupPassword').value;
+
+            // Retrieve users from localStorage
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+
+            // Check if the username already exists
+            if (users.some(user => user.username === username)) {
+                alert('Username already exists. Please choose a different one.');
+                return;
+            }
+
+            // Add the new user
+            users.push({ username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert('Sign-up successful! You can now log in.');
+            toggleForms(); // Switch back to the login form
+        }
+    </script>
+</body>
+</html>

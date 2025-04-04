@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Demo | Skill.AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: url('https://source.unsplash.com/1600x900/?technology,ai') no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen bg-gray-900 bg-opacity-80">
+    <div class="w-full max-w-2xl p-8 space-y-6 bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl text-white">
+        <div class="text-center">
+            <img src="C:\skill.AI\templates\Srmseal.png" alt="Skill.AI Logo" class="w-16 mx-auto">
+            <h2 class="mt-2 text-2xl font-semibold">Welcome to Skill.AI</h2>
+            <p class="text-sm text-gray-400">Let's analyze your skills and proceed further.</p>
+        </div>
+
+        <!-- Data Collection Form -->
+        <form id="dataForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium">Full Name</label>
+                <input type="text" id="fullName" required class="w-full px-4 py-2 mt-1 text-black rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none hover:bg-gray-700 transition duration-200">
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Email</label>
+                <input type="email" id="email" required class="w-full px-4 py-2 mt-1 text-black rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none hover:bg-gray-700 transition duration-200">
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Student ID</label>
+                <input type="text" id="studentId" required class="w-full px-4 py-2 mt-1 text-black rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none hover:bg-gray-700 transition duration-200">
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Course</label>
+                <input type="text" id="course" required class="w-full px-4 py-2 mt-1 text-black rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none hover:bg-gray-700 transition duration-200">
+            </div>
+
+            <!-- Skills Selection -->
+            <div>
+                <label class="block text-sm font-medium">Skills You Know</label>
+                <div class="flex flex-wrap gap-2 mt-2">
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" value="C" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                        <span>C</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" value="C++" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                        <span>C++</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" value="Python" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                        <span>Python</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" value="Java" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                        <span>Java</span>
+                    </label>
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" value="Web Development" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                        <span>Web Development</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Modern Submit Button -->
+            <button type="button" onclick="submitData()" class="w-full py-3 mt-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-800 focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out transform hover:scale-105">
+                Submit
+            </button>
+        </form>
+    </div>
+
+    <script>
+        function submitData() {
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const studentId = document.getElementById('studentId').value;
+            const course = document.getElementById('course').value;
+
+            const skills = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                skills.push(checkbox.value);
+            });
+
+            if (!fullName || !email || !studentId || !course || skills.length === 0) {
+                alert('Please fill in all fields and select at least one skill.');
+                return;
+            }
+
+            // Save data to localStorage
+            const studentData = {
+                fullName,
+                email,
+                studentId,
+                course,
+                skills
+            };
+            localStorage.setItem('studentData', JSON.stringify(studentData));
+
+            alert('Data submitted successfully!');
+            // Redirect to the next page (e.g., career suggestions)
+            window.location.href = '/templates/career.html';
+        }
+    </script>
+</body>
+</html>
+

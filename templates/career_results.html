@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Results | Skill.AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c') no-repeat center center fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen bg-gray-900 bg-opacity-80">
+    <div class="w-full max-w-3xl p-8 space-y-6 bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl text-white">
+        <div class="text-center">
+            <img src="Srmseal.png" alt="Skill.AI Logo" class="w-16 mx-auto">
+            <h2 class="mt-2 text-2xl font-semibold">Career Results</h2>
+            <p class="text-sm text-gray-400">Here are your results based on your answers and skill analysis.</p>
+        </div>
+
+        <!-- Career Suggestions Section -->
+        <div class="space-y-4">
+            <h3 class="text-lg font-medium">Suggested Careers</h3>
+            <div id="careerSuggestions" class="p-4 bg-gray-700 rounded-lg shadow space-y-2">
+                <!-- Career suggestions will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Question Feedback Section -->
+        <div class="space-y-4">
+            <h3 class="text-lg font-medium">Question Feedback</h3>
+            <div id="questionResults" class="p-4 bg-gray-700 rounded-lg shadow space-y-4">
+                <!-- Question results will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="flex justify-center">
+            <button onclick="window.location.href='/career_sugession'" class="px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-800 focus:ring-4 focus:ring-blue-300 transition duration-300 ease-in-out transform hover:scale-105">
+                Back to Questions
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Fetch career suggestions and question results from localStorage
+        const careerSuggestions = JSON.parse(localStorage.getItem('careerSuggestions')) || [];
+        const questionResults = JSON.parse(localStorage.getItem('questionResults')) || [];
+
+        // Display career suggestions
+        const careerContainer = document.getElementById('careerSuggestions');
+        if (careerSuggestions.length > 0) {
+            careerSuggestions.forEach(career => {
+                const div = document.createElement('div');
+                div.className = 'p-2 bg-gray-600 rounded-lg shadow';
+                div.innerHTML = `<strong>${career}</strong>`;
+                careerContainer.appendChild(div);
+            });
+        } else {
+            careerContainer.innerHTML = '<p class="text-gray-400">No career suggestions available.</p>';
+        }
+
+        // Display question results
+        const resultsContainer = document.getElementById('questionResults');
+        if (questionResults.length > 0) {
+            questionResults.forEach(result => {
+                const div = document.createElement('div');
+                div.className = 'p-4 bg-gray-600 rounded-lg shadow';
+                div.innerHTML = `
+                    <p><strong>Question:</strong> ${result.question}</p>
+                    <p><strong>Your Answer:</strong> ${result.answer}</p>
+                    <p><strong>Skill Level:</strong> ${result.skill_level}</p>
+                `;
+                resultsContainer.appendChild(div);
+            });
+        } else {
+            resultsContainer.innerHTML = '<p class="text-gray-400">No question results available.</p>';
+        }
+    </script>
+</body>
+</html>
